@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "es2019",
+    "module": "commonjs",
+    "strict": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "outDir": "dist",
+    "baseUrl": ".",
+    "paths": {
+      "@artifacts/*": ["artifacts/*"],
+      "@deploy/*": ["deploy/*"],
+      "@typechained": ["typechained"],
+      "@typechained/*": ["typechained/*"],
+      "@utils/*": ["utils/*"],
+      "@test-utils": ["test/utils/index"],
+      "@test-utils/*": ["test/utils/*"],
+      "@e2e/*": ["test/e2e/*"],
+      "@integration/*": ["test/integration/*"],
+      "@unit/*": ["test/unit/*"]
+    }
+  },
+  "include": ["./scripts", "./deploy", "./test"],
+  "files": ["./hardhat.config.ts"]
+}
