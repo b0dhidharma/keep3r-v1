@@ -6,7 +6,6 @@ import { abi as IUniswapV3PoolABI } from '@artifacts/@uniswap/v3-core/contracts/
 import { IERC20, IUniswapV3Pool, Keep3rV1, Keep3rV3Helper, Keep3rV3HelperForTest, Keep3rV3HelperForTest__factory } from '@typechained';
 import { FakeContract, smock } from '@defi-wonderland/smock';
 import { ethers, network } from 'hardhat';
-import { BigNumber, utils } from 'ethers';
 import { evm } from '@test-utils';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/dist/src/signers';
 import moment from 'moment';
@@ -59,50 +58,6 @@ describe('Keep3rV3Helper', () => {
       });
       then('emits event', async () => {
         await expect(setTWAPTx).to.emit(keep3rV3Helper, 'TWAPSet').withArgs(newTWAP);
-      });
-    });
-  });
-
-  describe('setBasefeeBonus', () => {
-    // only governor
-    when('basefeeBonus period is bigger than MAX_BASEFEE_BONUS', () => {
-      then('tx is reverted with reason', async () => {
-        await expect(keep3rV3Helper.connect(governor).setBasefeeBonus((await keep3rV3Helper.MAX_BASEFEE_BONUS()) + 1)).to.be.revertedWith(
-          'InvalidBasefeeBonus'
-        );
-      });
-    });
-    when('basefeeBonus is less than MAX_BASEFEE_BONUS', () => {
-      let setBasefeeBonusTx: TransactionResponse;
-      const basefeeBonus = 9315;
-      given(async () => {
-        setBasefeeBonusTx = await keep3rV3Helper.connect(governor).setBasefeeBonus(basefeeBonus);
-      });
-      then('sets basefeeBonus', async () => {
-        expect(await keep3rV3Helper.basefeeBonus()).to.equal(basefeeBonus);
-      });
-      then('emits event', async () => {
-        await expect(setBasefeeBonusTx).to.emit(keep3rV3Helper, 'BasefeeBonusSet').withArgs(basefeeBonus);
-      });
-    });
-  });
-
-  describe('_getBasefeeWithBonus', () => {
-    const basefee = 1000;
-    given(async () => {
-      await keep3rV3Helper.setBasefee(basefee);
-    });
-    when('there is no bonus', () => {
-      given(async () => {
-        await keep3rV3Helper.connect(governor).setBasefeeBonus(0);
-      });
-      then('returns basefee', async () => {
-        expect(await keep3rV3Helper.getBasefeeWithBonus()).to.equal(basefee);
-      });
-    });
-    when('there is bonus', () => {
-      then('returns basefee + bonus', async () => {
-        expect(await keep3rV3Helper.getBasefeeWithBonus()).to.equal(basefee * 1.05);
       });
     });
   });

@@ -4,7 +4,7 @@ pragma solidity >=0.8.7 <0.9.0;
 import '../Keep3rV3Helper.sol';
 
  /* solhint-disable */
- 
+
 contract Keep3rV3HelperForTest is Keep3rV3Helper {
   uint256 basefee;
 
@@ -17,10 +17,6 @@ contract Keep3rV3HelperForTest is Keep3rV3Helper {
 
   function setBasefee(uint256 _basefee) external {
     basefee = _basefee;
-  }
-
-  function getBasefeeWithBonus() external view returns (uint256) {
-    return _getBasefeeWithBonus();
   }
 
   function _getBasefee() internal view override returns (uint256) {

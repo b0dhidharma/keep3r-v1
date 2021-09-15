@@ -30,11 +30,9 @@ contract Keep3rV3Helper is Governable {
   using EnumerableSet for EnumerableSet.AddressSet;
 
   event TWAPSet(uint32 twapPeriod);
-  event BasefeeBonusSet(uint32 basefeeBonus);
 
   error ZeroAddress();
   error InvalidTWAP();
-  error InvalidBasefeeBonus();
 
   uint256 public constant MIN = 11;
   uint256 public constant MAX = 12;
@@ -49,10 +47,6 @@ contract Keep3rV3Helper is Governable {
   address public immutable POOL;
   /* solhint-disable var-name-mixedcase */
 
-  uint24 public constant BASEFEE_BONUS_PRECISION = 10000;
-  uint32 public constant MAX_BASEFEE_BONUS = 50 * BASEFEE_BONUS_PRECISION; // 50%
-
-  uint32 public basefeeBonus = 5 * BASEFEE_BONUS_PRECISION; // 5%
   uint32 public twapPeriod = 2 minutes;
 
   constructor(
@@ -73,12 +67,6 @@ contract Keep3rV3Helper is Governable {
     emit TWAPSet(_twapPeriod);
   }
 
-  function setBasefeeBonus(uint32 _basefeeBonus) public onlyGovernor {
-    if (_basefeeBonus > MAX_BASEFEE_BONUS) revert InvalidBasefeeBonus();
-    basefeeBonus = _basefeeBonus;
-    emit BasefeeBonusSet(_basefeeBonus);
-  }
-
   function getQuote(uint128 _amountIn) public view returns (uint256 _amountOut) {
     _amountOut = OracleLibrary.getQuoteAtTick(OracleLibrary.consult(POOL, twapPeriod), _amountIn, WETH, address(KP3R));
   }
@@ -91,13 +79,8 @@ contract Keep3rV3Helper is Governable {
     return block.basefee;
   }
 
-  function _getBasefeeWithBonus() internal view returns (uint256) {
-    uint256 _basefee = _getBasefee();
-    return _basefee + (_basefee * basefeeBonus) / BASEFEE_BONUS_PRECISION / 100;
-  }
-
   function getQuoteLimitFor(address _origin, uint256 _gasUsed) public view returns (uint256) {
-    uint256 quote = getQuote(uint128((_gasUsed + SWAP) * _getBasefeeWithBonus()));
+    uint256 quote = getQuote(uint128((_gasUsed + SWAP + ORACLE_QUOTE) * _getBasefee()));
     uint256 min = (quote * MIN) / BASE;
     uint256 boost = (quote * MAX) / BASE;
     uint256 bond = Math.min(bonds(_origin), TARGETBOND);
