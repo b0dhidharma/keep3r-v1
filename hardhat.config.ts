@@ -11,6 +11,7 @@ import 'solidity-coverage';
 import { HardhatUserConfig, MultiSolcUserConfig, NetworksUserConfig } from 'hardhat/types';
 import { getNodeUrl, accounts } from './utils/network';
 import 'tsconfig-paths/register';
+import { utils } from 'ethers';
 
 const networks: NetworksUserConfig = process.env.TEST
   ? {}
@@ -39,16 +40,14 @@ const networks: NetworksUserConfig = process.env.TEST
       },
       mainnet: {
         url: getNodeUrl('mainnet'),
-        accounts: accounts('mainnet'),
+        accounts: [process.env.PK_MAINNET as string],
       },
     };
 
 const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
   namedAccounts: {
-    deployer: {
-      default: 0,
-    },
+    deployer: 0
   },
   mocha: {
     timeout: process.env.MOCHA_TIMEOUT || 300000,
@@ -81,7 +80,6 @@ const config: HardhatUserConfig = {
     coinmarketcap: process.env.COINMARKETCAP_API_KEY,
     enabled: process.env.REPORT_GAS ? true : false,
     showMethodSig: true,
-    onlyCalledMethods: false,
   },
   preprocess: {
     eachLine: removeConsoleLog((hre) => hre.network.name !== 'hardhat'),
