@@ -14,21 +14,21 @@ contract('Keep3rV1', () => {
   let keep3r: Keep3rV1;
   let keep3rJob: Keep3rJob;
   let keep3rJobFactory: Keep3rJob__factory;
-  
+
   let keep3rGovernor: JsonRpcSigner;
   let keeper: JsonRpcSigner;
-  
+
   let snapshotId: string;
 
   before(async () => {
     await evm.reset({
       jsonRpcUrl: getNodeUrl('mainnet'),
-      blockNumber: forkBlockNumber['Keep3rV1-work']
+      blockNumber: forkBlockNumber['Keep3rV1-work'],
     });
     await deployments.fixture('Keep3rV3Helper', { keepExistingDeployments: false });
     keep3rV3Helper = await ethers.getContract('Keep3rV3Helper');
     keep3r = await ethers.getContractAt('contracts/Keep3r.sol:Keep3rV1', KP3R);
-    
+
     keep3rJobFactory = await ethers.getContractFactory('contracts/test/Keep3rJob.sol:Keep3rJob');
     keep3rJob = await keep3rJobFactory.deploy(KP3R);
 
@@ -55,16 +55,12 @@ contract('Keep3rV1', () => {
       initialBonds = await keep3r.bonds(keeper._address, KP3R);
       initialCredits = await keep3r.credits(keep3rJob.address, KP3R);
       await keep3rJob.connect(keeper).work();
-    })
+    });
     then('adds credits to keeper bonds', async () => {
-      expect(
-        await keep3r.bonds(keeper._address, KP3R)
-      ).to.be.gt(initialBonds);
+      expect(await keep3r.bonds(keeper._address, KP3R)).to.be.gt(initialBonds);
     });
     then('takes credits from job', async () => {
-      expect(
-        await keep3r.credits(keep3rJob.address, KP3R)
-      ).to.be.lt(initialCredits);
+      expect(await keep3r.credits(keep3rJob.address, KP3R)).to.be.lt(initialCredits);
     });
   });
 });

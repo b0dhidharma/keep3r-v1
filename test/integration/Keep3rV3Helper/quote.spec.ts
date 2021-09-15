@@ -27,14 +27,14 @@ contract('Keep3rV3Helper', () => {
     let ETHToKP3RRate: number;
     given(async () => {
       const KP3RETHRate = await coingecko.getLastPrice('keep3rv1', 'eth', startingTime - minCoingeckoDelta, startingTime);
-      ETHToKP3RRate = 1/KP3RETHRate;
+      ETHToKP3RRate = 1 / KP3RETHRate;
     });
     then('returns correct twap', async () => {
       const twap = await keep3rV3Helper.getQuote(utils.parseEther('1'));
       bn.expectToEqualWithThreshold({
         value: twap,
         to: coingecko.convertPriceToBigNumberWithDecimals(ETHToKP3RRate, 18),
-        threshold: PRICE_THRESHOLD
+        threshold: PRICE_THRESHOLD,
       });
     });
   });

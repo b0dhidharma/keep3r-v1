@@ -17,14 +17,13 @@ export const getCoingeckoDataPoints = async (coin: string, currency: string, fro
   return coingeckoDatapoints;
 };
 
-type CoingeckoSimple = {[coin: string]: {[currency: string]: number}};
+type CoingeckoSimple = { [coin: string]: { [currency: string]: number } };
 
 export const getSimple = async (coin: string, currency: string): Promise<number> => {
-  const coingeckoSimple = (
-    await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${coin}&vs_currencies=${currency}`)
-  ).data as CoingeckoSimple;
+  const coingeckoSimple = (await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${coin}&vs_currencies=${currency}`))
+    .data as CoingeckoSimple;
   return coingeckoSimple[coin][currency];
-}
+};
 
 export const getLastPrice = async (coin: string, currency: string, from: number, to: number): Promise<number> => {
   const coingeckoDataPoints = await getCoingeckoDataPoints(coin, currency, from, to);

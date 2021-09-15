@@ -10,9 +10,7 @@ interface IKeep3rV1 {
 contract Keep3rJob {
   address public keep3r;
 
-  constructor(
-    address _keep3r
-  ) {
+  constructor(address _keep3r) {
     keep3r = _keep3r;
   }
 

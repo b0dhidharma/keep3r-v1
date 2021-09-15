@@ -1,3 +1,7 @@
+
+contracts/test
+contracts/Keep3r.sol
+
 # General
 .prettierignore
 .solhintignore

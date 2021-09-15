@@ -1,5 +1,7 @@
 pragma solidity ^0.6.12;
 
+ /* solhint-disable */
+
 // From https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/math/Math.sol
 // Subject to the MIT license.
 
